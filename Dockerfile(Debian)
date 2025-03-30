@@ -1,5 +1,5 @@
-# Build Stage
-FROM golang:1.23 AS builder
+# Build stage
+FROM golang:1.23 as builder
 
 WORKDIR /app
 
@@ -16,26 +16,24 @@ RUN apt-get update && apt-get install -y \
 COPY . .
 
 RUN go mod tidy
+RUN go run main.go -download-only
 RUN go build -o app .
 
-# Runtime Stage
-FROM frolvlad/alpine-glibc:alpine-3.17
+FROM debian:stable-slim
 
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ttf-freefont \
-    dumb-init \
-    bash \
+RUN apt-get update && apt-get install -y \
     ca-certificates \
-    && mkdir -p /root/.cache
+    libatk1.0-0 libatk-bridge2.0-0 libcups2 libxcomposite1 \
+    libxdamage1 libxrandr2 libgbm1 libasound2 libpangocairo-1.0-0 \
+    libgtk-3-0 libnss3 libxshmfence1 \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
+COPY --from=builder /root/.cache/rod /root/.cache/rod
 COPY --from=builder /app/app .
 COPY --from=builder /app/views /app/views
 
 EXPOSE 3000
-ENTRYPOINT ["dumb-init", "./app"]
+
+CMD ["./app"]

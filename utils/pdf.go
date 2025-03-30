@@ -11,6 +11,7 @@ import (
 
 func GeneratePDF(html string) ([]byte, error) {
 	url := launcher.New().
+		Bin("/usr/bin/chromium-browser").
 		Headless(true).
 		NoSandbox(true).
 		MustLaunch()
