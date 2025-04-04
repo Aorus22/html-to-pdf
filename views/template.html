@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soal Ujian</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #22c55e;
+            --background-light: #f8fafc;
+            --text-dark: #1e293b;
+        }
+
+        @font-face {
+            font-family: 'SegoeCustom';
+            src: url('/public/segoe-ui.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'SegoeCustom', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #000;
+            background-color: var(--background-light);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .soal-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .soal-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .soal-number {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .soal-number::before {
+            content: "•";
+            color: currentColor;
+            font-size: 1.8em;
+        }
+
+        .soal-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+            border-left: 3px solid #e2e8f0;
+        }
+
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            transition: background-color 0.2s;
+            position: relative;
+            justify-content: flex-start;
+        }
+
+        .option:hover {
+            background-color: #f1f5f9;
+        }
+
+        .option span {
+            display: inline-block;
+            line-height: 20px;
+        }
+
+        .kunci-benar {
+            background-color: #dcfce7 !important;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{.datasoal.id}}</h1>
+        </div>
+
+        {{range .datasoal.soal}}
+            <div class="soal-card">
+                <div class="soal-number">Soal Nomor {{.noasli}}</div>
+                <div class="soal-text">{{.soal | safeHTML}}</div>
+
+                {{ $no := .noasli }}
+                <div class="option-list">
+                    {{range .options}}
+                        {{ $isCorrect := eq .optionasli (index $.datakunci.kunci (printf "%v" $no)) }}
+                        <label class="option {{if $isCorrect}}kunci-benar{{end}}">
+                            <span>{{.answer | safeHTML}}</span>
+                        </label>
+                    {{end}}
+                </div>
+            </div>
+        {{end}}
+    </div>
+</body>
+</html>
